@@ -13,6 +13,7 @@ PRIVATE_ONLY = False
 
 GRAPHVIZ_TEMPLATE = """
 digraph G {
+    graph[overlap=false];
 
     $users
 
@@ -34,9 +35,27 @@ def graphviz_dotfile(set_of_links):
 
 def setof_links_to_graphviz(set_of_links):
   result = ""
+  for repo in derive_repos(set_of_links):
+    result += "   " + repo + "[shape=record, color=red];"
+  for user in derive_users(set_of_links):
+    result += "   " + user + "[shape=box, color=blue];" 
   for link in set_of_links:
-    result +=  "  " + sanitize(link[0]) + "->" + sanitize(link[1]) + "; \n"
+    result +=  "  " + sanitize(link[0]) + '->' + sanitize(link[1]) + "; \n"
   return result
+
+def derive_repos(setlinks):
+  out = Set()
+  for link in setlinks:
+    out.add(sanitize(link[1]))
+  return out
+
+
+
+def derive_users(setlinks):
+  out = Set()
+  for link in setlinks:
+    out.add(sanitize(link[0]))
+  return out
 
 def sanitize(text):
   return text.replace("-", "_")
