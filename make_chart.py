@@ -6,6 +6,7 @@ from ghtools import cli
 from ghtools.github.organisation import Organisation
 from ghtools.github.repo import Repo
 from sets import Set
+import pickle 
 
 ORGANISATION = "alphagov"
 PRIVATE_ONLY = False 
@@ -34,18 +35,21 @@ def graphviz_dotfile(set_of_links):
 def setof_links_to_graphviz(set_of_links):
   result = ""
   for link in set_of_links:
-    result +=  "  " + link[0] + "->" + link[1] + "; \n"
+    result +=  "  " + sanitize(link[0]) + "->" + sanitize(link[1]) + "; \n"
   return result
+
+def sanitize(text):
+  return text.replace("-", "_")
 
 def all_private_repos():
   org_api = Organisation(ORGANISATION)
-  result = "" 
+  result = Set()
   for repo in org_api.list_repos():
     if repo["private"]:
-      repos.append( { "name": repo["name"], "private": repo["private"] } )
+      result = result.union(commits_for_repo(repo["name"]))
   return result 
 
-BRAKER=1000
+BRAKER=100
 
 def commits_for_repo(repo_name):
   repo_api = Repo(ORGANISATION+"/"+repo_name)
@@ -59,9 +63,16 @@ def commits_for_repo(repo_name):
       break 
   return links
 
+PICKLE = 'data.pkl'
+
+def grab_and_pickle():
+  login()
+  set_of_links = all_private_repos()
+  output = open(PICKLE, 'wb')
+  pickle.dump(set_of_links, output)
 
 if __name__ == '__main__':
-  login()
-  set_of_links = commits_for_repo("puppet")
+  pickle_file = open(PICKLE, 'rb')
+  set_of_links=pickle.load(pickle_file)
   write_to_file(graphviz_dotfile(set_of_links), "output.out")
   
