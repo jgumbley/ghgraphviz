@@ -8,12 +8,15 @@ from ghtools.github.repo import Repo
 from sets import Set
 import pickle 
 
-ORGANISATION = "alphagov"
+ORGANISATION = "thoughtworks"
 PRIVATE_ONLY = False 
 
+# ortho
 GRAPHVIZ_TEMPLATE = """
 digraph G {
-    graph[overlap=false];
+    node[fontname="Helvetica"];
+    edge[dir=none];
+    graph[overlap=false,splines=ortho];
 
     $users
 
@@ -35,12 +38,12 @@ def graphviz_dotfile(set_of_links):
 
 def setof_links_to_graphviz(set_of_links):
   result = ""
-  for repo in derive_repos(set_of_links):
-    result += "   " + repo + "[shape=record, color=red];"
   for user in derive_users(set_of_links):
     result += "   " + user + "[shape=box, color=blue];" 
   for link in set_of_links:
     result +=  "  " + sanitize(link[0]) + '->' + sanitize(link[1]) + "; \n"
+  for repo in derive_repos(set_of_links):
+    result += "   " + repo + "[shape=record, color=red];"
   return result
 
 def derive_repos(setlinks):
@@ -64,8 +67,9 @@ def all_private_repos():
   org_api = Organisation(ORGANISATION)
   result = Set()
   for repo in org_api.list_repos():
-    if repo["private"]:
-      result = result.union(commits_for_repo(repo["name"]))
+    #print repo
+    #if repo["private"]:
+    result = result.union(commits_for_repo(repo["name"]))
   return result 
 
 BRAKER=100
@@ -91,6 +95,7 @@ def grab_and_pickle():
   pickle.dump(set_of_links, output)
 
 if __name__ == '__main__':
+  grab_and_pickle()
   pickle_file = open(PICKLE, 'rb')
   set_of_links=pickle.load(pickle_file)
   write_to_file(graphviz_dotfile(set_of_links), "output.out")
