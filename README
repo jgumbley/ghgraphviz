@@ -1,11 +1,6 @@
+Github Graphviz
+-----------------------------------
 
-Want to be able to co-ordinate this OK.  
-
-
-Need the following.
-
-Repo
-    - private
-
-Users
-Teams
+Some tools for visualising the structure of repos and
+users from data available via the Github API.
+ 
