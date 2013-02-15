@@ -4,3 +4,8 @@ Github Graphviz
 Some tools for visualising the structure of repos and
 users from data available via the Github API.
  
+Split into two parts:
+    - Grab data from GitHub API and put into a 
+      serialised format.
+    - Process serialised format to generate graph.
+
