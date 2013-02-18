@@ -62,10 +62,17 @@ def write_to_file(content, outputfile):
 
 if __name__ == '__main__':
   blacklist = [
-      "something"
+      "wiki",
+      "puppet",
+      "vcloud-provisioner",
+      "development",
+      "alphagov-deployment",
+      "gds-provisioner",
+      "private-utils",
       ]
   pickle_file = open(PICKLE, 'rb')
   set_of_links=pickle.load(pickle_file)
+  print blacklist
   filtered_set_of_links=filter_repos(set_of_links, blacklist)
   write_to_file(make_graphviz_dotfile(filtered_set_of_links), "output.out")
   
