@@ -8,7 +8,7 @@ from ghtools.github.repo import Repo
 from sets import Set
 import pickle 
 
-ORGANISATION = "thoughtworks"
+ORGANISATION = "alphagov"
 PRIVATE_ONLY = False 
 
 # ortho
@@ -68,8 +68,8 @@ def all_private_repos():
   result = Set()
   for repo in org_api.list_repos():
     #print repo
-    #if repo["private"]:
-    result = result.union(commits_for_repo(repo["name"]))
+    if repo["private"]:
+        result = result.union(commits_for_repo(repo["name"]))
   return result 
 
 BRAKER=100
@@ -95,7 +95,7 @@ def grab_and_pickle():
   pickle.dump(set_of_links, output)
 
 if __name__ == '__main__':
-  grab_and_pickle()
+  #grab_and_pickle()
   pickle_file = open(PICKLE, 'rb')
   set_of_links=pickle.load(pickle_file)
   write_to_file(graphviz_dotfile(set_of_links), "output.out")
