@@ -21,7 +21,7 @@ digraph G {
 }
 """
 
-def graphviz_dotfile(set_of_links):
+def make_graphviz_dotfile(set_of_links):
   graph = Template(GRAPHVIZ_TEMPLATE)
   graphviz_format_links = setof_links_to_graphviz(set_of_links)
   return graph.substitute(users=graphviz_format_links)
@@ -51,12 +51,21 @@ def derive_users(setlinks):
 def sanitize(text):
   return text.replace("-", "_")
 
-
 PICKLE = 'data.pkl'
 
+def filter_repos(set_of_links, blacklist):
+  return [com for com in set_of_links if com[1] not in blacklist]
+
+def write_to_file(content, outputfile):
+  with open (outputfile, 'w') as f:
+    f.write(content)
+
 if __name__ == '__main__':
+  blacklist = [
+      "something"
+      ]
   pickle_file = open(PICKLE, 'rb')
   set_of_links=pickle.load(pickle_file)
-
-  write_to_file(graphviz_dotfile(set_of_links), "output.out")
+  filtered_set_of_links=filter_repos(set_of_links, blacklist)
+  write_to_file(make_graphviz_dotfile(filtered_set_of_links), "output.out")
   
